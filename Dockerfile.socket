@@ -1,0 +1,8 @@
+FROM python:3.8-slim
+
+RUN pip install aioredis
+
+COPY socket_server.py /app/socket_server.py
+WORKDIR /app
+
+CMD ["python", "socket_server.py"]

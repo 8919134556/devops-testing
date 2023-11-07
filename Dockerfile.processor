@@ -1,0 +1,24 @@
+# Use the slim version of Python 3.8
+FROM python:3.8-slim
+
+# Install necessary packages
+RUN apt-get update && apt-get install -y \
+    unixodbc-dev \
+    gcc \
+    g++ \
+ && apt-get clean \
+ && rm -rf /var/lib/apt/lists/*
+
+# Install Python libraries
+RUN pip install aioredis pyodbc
+
+# Copy both processor and db_inserting scripts into the container
+COPY processor.py /app/processor.py
+COPY db_inserting.py /app/db_inserting.py
+COPY .env /app/.env
+
+# Set the working directory in the container
+WORKDIR /app
+
+# Command to run the processor script
+CMD ["python", "processor.py"]

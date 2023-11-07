@@ -1,0 +1,27 @@
+version: '3'
+
+services:
+  socket_server:
+    build:
+      context: .
+      dockerfile: Dockerfile.socket
+    environment:
+      HOST: ${SOCKET_SERVER_HOST}
+      PORT: ${SOCKET_SERVER_PORT}
+      REDIS_HOST: ${REDIS_HOST}
+      REDIS_PORT: ${REDIS_PORT}
+
+  redis:
+    image: redis:latest
+
+  processor:
+    build:
+      context: .
+      dockerfile: Dockerfile.processor
+    environment:
+      REDIS_HOST: ${REDIS_HOST}
+      REDIS_PORT: ${REDIS_PORT}
+      DB_SERVER: ${DB_SERVER}
+      DB_USER: ${DB_USER}
+      DB_PASS: ${DB_PASS}
+      DB_NAME: ${DB_NAME}
