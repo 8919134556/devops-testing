@@ -1,5 +1,11 @@
-# Use the slim version of Python 3.8
-FROM python:3.8-slim
+# Use Python image as the base image
+FROM python:3.9
+
+# Set the working directory in the container
+WORKDIR /app
+
+# Copy the Processor Python script to the container
+COPY processer.py /app/processer.py
 
 # Install necessary packages
 RUN apt-get update && apt-get install -y \
@@ -14,11 +20,9 @@ RUN pip install aioredis pyodbc
 
 # Copy both processor and db_inserting scripts into the container
 COPY processor.py /app/processor.py
-COPY db_inserting.py /app/db_inserting.py
-COPY .env /app/.env
-
-# Set the working directory in the container
-WORKDIR /app
+# Set the environment variables for the Processor application
+ENV REDIS_HOST="redis"
+ENV REDIS_PORT=6379
 
 # Command to run the processor script
 CMD ["python", "processor.py"]
