@@ -1,8 +1,23 @@
-FROM python:3.8-slim
+# Use Python image as the base image
+FROM python:3.9
 
-RUN pip install aioredis
-
-COPY socket_server.py /app/socket_server.py
+# Set the working directory in the container
 WORKDIR /app
 
+# Copy the Socket Server Python script to the container
+COPY socket_server.py /app/socket_server.py
+
+# Install required Python dependencies
+RUN pip install aioredis
+
+# Expose the necessary port
+EXPOSE 8089
+
+# Set the environment variables for the Socket Server application
+ENV HOST="0.0.0.0"
+ENV PORT=8089
+ENV REDIS_HOST="redis"
+ENV REDIS_PORT=6379
+
+# Command to run the Socket Server
 CMD ["python", "socket_server.py"]

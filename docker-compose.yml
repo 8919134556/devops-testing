@@ -4,24 +4,36 @@ services:
   socket_server:
     build:
       context: .
-      dockerfile: Dockerfile.socket
+      dockerfile: Dockerfile_socket_server
+    ports:
+      - "${PORT}:${PORT}"
     environment:
-      HOST: ${SOCKET_SERVER_HOST}
-      PORT: ${SOCKET_SERVER_PORT}
-      REDIS_HOST: ${REDIS_HOST}
-      REDIS_PORT: ${REDIS_PORT}
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+    depends_on:
+      - redis
+    networks:
+      - app-network
 
-  redis:
-    image: redis:latest
-
-  processor:
+  processer:
     build:
       context: .
-      dockerfile: Dockerfile.processor
+      dockerfile: Dockerfile_processer
     environment:
-      REDIS_HOST: ${REDIS_HOST}
-      REDIS_PORT: ${REDIS_PORT}
-      DB_SERVER: ${DB_SERVER}
-      DB_USER: ${DB_USER}
-      DB_PASS: ${DB_PASS}
-      DB_NAME: ${DB_NAME}
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+    depends_on:
+      - redis
+    networks:
+      - app-network
+
+  redis:
+    image: redis
+    ports:
+      - "${REDIS_PORT}:${REDIS_PORT}"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
